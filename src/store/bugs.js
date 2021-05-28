@@ -1,69 +1,38 @@
-// Domain for managing a list of bugs
+import { createAction, createReducer } from "@reduxjs/toolkit";
 
-// ACTION TYPES
-// this file is to keep redux more maintainable
-// for example, for renamings you only have to change in this file
-// use past tense, as 'event' just happened
-const BUG_ADDED = "bugAdded";
-const BUG_REMOVED = "bugRemoved";
-const BUG_RESOLVED = "bugResolved";
+// Actions
+export const bugAdded = createAction("bugAdded");
+export const bugRemoved = createAction("bugRemoved");
+export const bugResolved = createAction("bugResolved");
 
-// ACTIONS
-// this file is often also called actionCreator.js
-// object is represented by {} wrapped in () so you need not type return
-export const bugAdded = (description) => ({
-  type: BUG_ADDED,
-  payload: {
-    description: description,
-  },
-});
-
-export const bugResolved = (id) => ({
-  type: BUG_RESOLVED,
-  payload: {
-    // id: id,
-    // in modern js, if name of prop and its value are equal, you can use shorthand syntax:
-    id,
-  },
-});
-
-// REDUCER
+// Reducer
 // with ducks (re-dux) pattern, reducer should be the default export of the domain file
 let lastId = 0;
 
-// initial state is an empty array []
-export default function reducer(state = [], action) {
-  switch (action.type) {
-    case BUG_ADDED:
-      return [
-        ...state,
-        {
-          // increment lastId
-          id: ++lastId,
+// createReducer from redux toolkit uses immer (immutable update pattern) under the hood
+// the benefit is that you can write 'normal' update code, without having to use spread operator
 
-          // payload should contain the MINIMAL information to update our system
-          description: action.payload.description,
-          resolved: false,
-        },
-      ];
+// createReducer has two params:
+// the first is initial state
+// the second is an object that maps actions to functions that handle those actions
+export default createReducer([], {
+  // key: value
+  // actions: functions (event => event handler)
 
-    case BUG_REMOVED:
-      return state.filter((bug) => bug.id !== action.payload.id);
+  // first param of the reducer is the state, which you can call bugs in this case
+  [bugAdded.type]: (bugs, action) => {
+    bugs.push({
+      // increment lastId
+      id: ++lastId,
 
-    case BUG_RESOLVED:
-      return state.map((bug) =>
-        bug.id !== action.payload.id
-          ? bug // if id not matches, just return the bug
-          : {
-              // else return new bug object, with modified property
-              ...bug,
-              resolved: true,
-            }
-      );
+      // payload should contain the MINIMAL information to update our system
+      description: action.payload.description,
+      resolved: false,
+    });
+  },
 
-    // if no correct action is found (e.g. by mistake), return the current state
-    // we do not want the system to blow up
-    default:
-      return state;
-  }
-}
+  [bugResolved.type]: (bugs, action) => {
+    const index = bugs.findIndex((bug) => bug.id === action.payload.id);
+    bugs[index].resolved = true;
+  },
+});

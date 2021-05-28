@@ -8,9 +8,11 @@ const store = configureStore();
 console.log(store);
 
 // you set the state by dispatching actions
-store.dispatch(bugAdded("Bug 1"));
-store.dispatch(bugAdded("Bug 2"));
-store.dispatch(bugAdded("Bug 3"));
-store.dispatch(bugResolved(1));
+// with redux toolkit, you want to pass an object
+// store.dispatch(bugAdded("Bug 1"));   // so, not pass this string, but:
+store.dispatch(bugAdded({ description: "Bug 1" }));
+store.dispatch(bugAdded({ description: "Bug 2" }));
+store.dispatch(bugAdded({ description: "Bug 3" }));
+store.dispatch(bugResolved({ id: 1 }));
 
 console.log(store.getState());
