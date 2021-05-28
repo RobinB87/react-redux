@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-// import reducer from "./bugs";
-import reducer from "./projects";
+import reducer from "./reducer";
 
 export default function () {
   // only pass the reference of the reducer, not the function: reducer()
