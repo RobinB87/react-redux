@@ -1,7 +1,7 @@
 let lastId = 0;
 
 // initial state is an empty array []
-function reducer(state = [], action) {
+export default function reducer(state = [], action) {
   switch (action.type) {
     case "bugAdded":
       return [
