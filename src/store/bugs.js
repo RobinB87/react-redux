@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { createSelector } from "reselect";
 
 let lastId = 0;
 
@@ -31,4 +32,15 @@ export default slice.reducer;
 
 // selectors
 // selector is a function that takes the state and returns the computed state
-export const getUnresolvedBugs = (state) => state.entities.bugs.filter((bug) => !bug.resolved);
+// memoization
+// technique to optimize expensive funcs
+// if you call same func with same params, you can get output right from the cache
+// give state (bugs) and get the not resolved bugs
+// if the list is not changed, the logic will not be executed again
+export const getUnresolvedBugs = createSelector(
+  // outputs of these (bugs)
+  (state) => state.entities.bugs,
+
+  // will be the inputs (bugs) of these
+  (bugs) => bugs.filter((bug) => !bug.resolved)
+);
