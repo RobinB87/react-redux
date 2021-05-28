@@ -1,5 +1,6 @@
 import reducer from "../reducer";
 
+// file is just an example how a store basically works
 // method to create private property in javascript
 function createStore(reducer) {
   let state;

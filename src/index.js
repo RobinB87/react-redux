@@ -1,5 +1,8 @@
-import store from "./store/store";
-import { bugAdded, bugResolved } from "./store/actions";
+import configureStore from "./store/configureStore";
+import { bugAdded, bugResolved } from "./store/bugs";
+
+const store = configureStore();
+
 // there is only a getState method, not a setState
 // so, the setState is actually a private property in this object
 console.log(store);

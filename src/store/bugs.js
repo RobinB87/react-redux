@@ -1,11 +1,40 @@
-import * as actions from "./store/actionTypes";
+// Domain for managing a list of bugs
 
+// ACTION TYPES
+// this file is to keep redux more maintainable
+// for example, for renamings you only have to change in this file
+// use past tense, as 'event' just happened
+const BUG_ADDED = "bugAdded";
+const BUG_REMOVED = "bugRemoved";
+const BUG_RESOLVED = "bugResolved";
+
+// ACTIONS
+// this file is often also called actionCreator.js
+// object is represented by {} wrapped in () so you need not type return
+export const bugAdded = (description) => ({
+  type: BUG_ADDED,
+  payload: {
+    description: description,
+  },
+});
+
+export const bugResolved = (id) => ({
+  type: BUG_RESOLVED,
+  payload: {
+    // id: id,
+    // in modern js, if name of prop and its value are equal, you can use shorthand syntax:
+    id,
+  },
+});
+
+// REDUCER
+// with ducks (re-dux) pattern, reducer should be the default export of the domain file
 let lastId = 0;
 
 // initial state is an empty array []
 export default function reducer(state = [], action) {
   switch (action.type) {
-    case actions.BUG_ADDED:
+    case BUG_ADDED:
       return [
         ...state,
         {
@@ -18,10 +47,10 @@ export default function reducer(state = [], action) {
         },
       ];
 
-    case actions.BUG_REMOVED:
+    case BUG_REMOVED:
       return state.filter((bug) => bug.id !== action.payload.id);
 
-    case actions.BUG_RESOLVED:
+    case BUG_RESOLVED:
       return state.map((bug) =>
         bug.id !== action.payload.id
           ? bug // if id not matches, just return the bug
