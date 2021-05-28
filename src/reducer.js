@@ -21,6 +21,17 @@ export default function reducer(state = [], action) {
     case actions.BUG_REMOVED:
       return state.filter((bug) => bug.id !== action.payload.id);
 
+    case actions.BUG_RESOLVED:
+      return state.map((bug) =>
+        bug.id !== action.payload.id
+          ? bug // if id not matches, just return the bug
+          : {
+              // else return new bug object, with modified property
+              ...bug,
+              resolved: true,
+            }
+      );
+
     // if no correct action is found (e.g. by mistake), return the current state
     // we do not want the system to blow up
     default:
