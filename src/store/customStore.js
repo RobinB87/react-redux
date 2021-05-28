@@ -1,4 +1,4 @@
-import reducer from "./reducer";
+import reducer from "../reducer";
 
 // method to create private property in javascript
 function createStore(reducer) {
