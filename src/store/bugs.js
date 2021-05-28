@@ -24,10 +24,16 @@ const slice = createSlice({
       const index = bugs.findIndex((bug) => bug.id === action.payload.id);
       bugs[index].resolved = true;
     },
+
+    bugAssignedToUser: (bugs, action) => {
+      const { bugId, userId } = action.payload;
+      const index = bugs.findIndex((bug) => bug.id === bugId);
+      bugs[index].userId = userId;
+    },
   },
 });
 
-export const { bugAdded, bugResolved } = slice.actions;
+export const { bugAdded, bugResolved, bugAssignedToUser } = slice.actions;
 export default slice.reducer;
 
 // selectors
@@ -44,3 +50,13 @@ export const getUnresolvedBugs = createSelector(
   // will be the inputs (bugs) of these
   (bugs) => bugs.filter((bug) => !bug.resolved)
 );
+
+// the create selector returns a function
+// so, to be able to get the userId, set the constant to a different function
+// this func will take a param, userId
+// and will return the value, that is returned by the createSelector func
+export const getBugsByUser = (userId) =>
+  createSelector(
+    (state) => state.entities.bugs,
+    (bugs) => bugs.filter((bug) => bug.userId === userId)
+  );

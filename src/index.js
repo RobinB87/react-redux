@@ -1,6 +1,7 @@
 import configureStore from "./store/configureStore";
-import { bugAdded, bugResolved, getUnresolvedBugs } from "./store/bugs";
+import { bugAdded, bugResolved, bugAssignedToUser, getUnresolvedBugs, getBugsByUser } from "./store/bugs";
 import { projectAdded } from "./store/projects";
+import { userAdded } from "./store/users";
 
 const store = configureStore();
 
@@ -19,3 +20,14 @@ store.dispatch(projectAdded({ name: "Project1" }));
 
 const unresolvedBugs = getUnresolvedBugs(store.getState());
 console.log(unresolvedBugs);
+
+store.dispatch(userAdded({ name: "Blik-Jan" }));
+store.dispatch(userAdded({ name: "Henkie" }));
+store.dispatch(userAdded({ name: "De Padde" }));
+
+store.dispatch(bugAssignedToUser({ bugId: 1, userId: 1 }));
+
+// pass the userId 1, this will return a func, which will get the state
+// and it will return the bugs assigned to that user
+const assignedBugs = getBugsByUser(1)(store.getState());
+console.log(assignedBugs);
