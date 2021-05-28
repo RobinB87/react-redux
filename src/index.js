@@ -1,5 +1,6 @@
 import configureStore from "./store/configureStore";
 import { bugAdded, bugResolved } from "./store/bugs";
+import { projectAdded } from "./store/projects";
 
 const store = configureStore();
 
@@ -10,9 +11,11 @@ console.log(store);
 // you set the state by dispatching actions
 // with redux toolkit, you want to pass an object
 // store.dispatch(bugAdded("Bug 1"));   // so, not pass this string, but:
-store.dispatch(bugAdded({ description: "Bug 1" }));
-store.dispatch(bugAdded({ description: "Bug 2" }));
-store.dispatch(bugAdded({ description: "Bug 3" }));
-store.dispatch(bugResolved({ id: 1 }));
+// store.dispatch(bugAdded({ description: "Bug 1" }));
+// store.dispatch(bugAdded({ description: "Bug 2" }));
+// store.dispatch(bugAdded({ description: "Bug 3" }));
+// store.dispatch(bugResolved({ id: 1 }));
+
+store.dispatch(projectAdded({ name: "Project1" }));
 
 console.log(store.getState());
