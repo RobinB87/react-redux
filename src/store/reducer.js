@@ -1,8 +1,7 @@
 import { combineReducers } from "redux";
-import bugsReducer from "./bugs";
-import projectsReducer from "./projects";
+import entitiesReducer from "./entities";
 
+// here you can have for example entities reducers, auth reducer, etc
 export default combineReducers({
-  bugs: bugsReducer,
-  projects: projectsReducer,
+  entities: entitiesReducer,
 });
