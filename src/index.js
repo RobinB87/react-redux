@@ -24,6 +24,10 @@ store.dispatch((dispatch, getState) => {
 });
 
 // if the promise is rejected => dispatch()
+store.dispatch({
+  type: "error",
+  payload: { message: "An error occurred." },
+});
 
 // you set the state by dispatching actions
 // with redux toolkit, you want to pass an object
