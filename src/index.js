@@ -7,27 +7,39 @@ const store = configureStore();
 
 // there is only a getState method, not a setState
 // so, the setState is actually a private property in this object
-console.log(store);
+// console.log(store);
 
 // call an api
 // when promise is resolved => dispatch()
-store.dispatch(() => {
-  store.dispatch({ type: "bugsReceived", bugs: [1, 2, 3] });
+// store.dispatch(() => {
+//   store.dispatch({ type: "bugsReceived", bugs: [1, 2, 3] });
+// });
+
+store.dispatch({
+  type: "apiCallBegan",
+  payload: {
+    url: "/bugs",
+    // here we use strings, not passing functions
+    // action objects should be serializable, to be stored
+    // functions are not serializable
+    onSucces: "bugsReceived",
+    onError: "apiRequestFailed",
+  },
 });
 
-// in another part of the application you would not have access directly to the store
-store.dispatch((dispatch, getState) => {
-  // hence, you might want to add a reference to the store as a param in the middleware func
-  // instead of => store => ..., use ({ dispatch, getState })
-  dispatch({ type: "bugsReceived", bugs: [1, 2, 3] });
-  console.log(getState());
-});
+// // in another part of the application you would not have access directly to the store
+// store.dispatch((dispatch, getState) => {
+//   // hence, you might want to add a reference to the store as a param in the middleware func
+//   // instead of => store => ..., use ({ dispatch, getState })
+//   dispatch({ type: "bugsReceived", bugs: [1, 2, 3] });
+//   console.log(getState());
+// });
 
 // if the promise is rejected => dispatch()
-store.dispatch({
-  type: "error",
-  payload: { message: "An error occurred." },
-});
+// store.dispatch({
+//   type: "error",
+//   payload: { message: "An error occurred." },
+// });
 
 // you set the state by dispatching actions
 // with redux toolkit, you want to pass an object

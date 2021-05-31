@@ -6,7 +6,7 @@
 // a middleware function is a curried (currying) func with three params: store => next => ...
 // but you can add another param, so, you can add a param to the function in the store
 const logger = (param) => (store) => (next) => (action) => {
-  console.log("Logging the param: ", param);
+  console.log("Logging: ", param);
 
   // if you do not call next, the action will not be processed further (eventually the reducer)
   next(action);
