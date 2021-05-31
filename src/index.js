@@ -1,8 +1,5 @@
 import configureStore from "./store/configureStore";
-import { bugAdded, bugResolved, bugAssignedToUser, getUnresolvedBugs, getBugsByUser } from "./store/bugs";
-import { projectAdded } from "./store/projects";
-import { userAdded } from "./store/users";
-import * as actions from "./store/api";
+import { loadBugs } from "./store/bugs";
 
 const store = configureStore();
 
@@ -16,18 +13,7 @@ const store = configureStore();
 //   store.dispatch({ type: "bugsReceived", bugs: [1, 2, 3] });
 // });
 
-store.dispatch(
-  actions.apiCallBegan({
-    url: "/bugs",
-    // here we use strings, not passing functions
-    // action objects should be serializable, to be stored
-    // functions are not serializable
-    onSucces: "bugsReceived",
-    // middleware should be intelligent enough to catch normal errors,
-    // so you do not need to specify onError everywhere
-    // reserve it for specific scenarios where you want to do something specific with the bugs
-  })
-);
+store.dispatch(loadBugs());
 
 // // in another part of the application you would not have access directly to the store
 // store.dispatch((dispatch, getState) => {

@@ -1,16 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
+import { apiCallBegan } from "./api";
 
 let lastId = 0;
 
 // use createSlice to combine creating actions and reducers
 const slice = createSlice({
   name: "bugs",
-  initialState: [],
+  initialState: { list: [], loading: false, lastFetch: null },
   reducers: {
     // actions => action handlers
     bugAdded: (bugs, action) => {
-      bugs.push({
+      bugs.list.push({
         // increment lastId
         id: ++lastId,
 
@@ -21,20 +22,38 @@ const slice = createSlice({
     },
 
     bugResolved: (bugs, action) => {
-      const index = bugs.findIndex((bug) => bug.id === action.payload.id);
-      bugs[index].resolved = true;
+      const index = bugs.list.findIndex((bug) => bug.id === action.payload.id);
+      bugs.list[index].resolved = true;
+    },
+
+    bugsReceived: (bugs, action) => {
+      bugs.list = action.payload;
     },
 
     bugAssignedToUser: (bugs, action) => {
       const { bugId, userId } = action.payload;
-      const index = bugs.findIndex((bug) => bug.id === bugId);
-      bugs[index].userId = userId;
+      const index = bugs.list.findIndex((bug) => bug.id === bugId);
+      bugs.list[index].userId = userId;
     },
   },
 });
 
-export const { bugAdded, bugResolved, bugAssignedToUser } = slice.actions;
+export const { bugAdded, bugResolved, bugAssignedToUser, bugsReceived } = slice.actions;
 export default slice.reducer;
+
+// action creators
+const url = "/bugs";
+export const loadBugs = () =>
+  apiCallBegan({
+    url: url,
+    // here we use strings, not passing functions
+    // action objects should be serializable, to be stored
+    // functions are not serializable
+    onSuccess: bugsReceived.type,
+    // middleware should be intelligent enough to catch normal errors,
+    // so you do not need to specify onError everywhere
+    // reserve it for specific scenarios where you want to do something specific with the bugs
+  });
 
 // selectors
 // selector is a function that takes the state and returns the computed state
@@ -48,7 +67,7 @@ export const getUnresolvedBugs = createSelector(
   (state) => state.entities.bugs,
 
   // will be the inputs (bugs) of these
-  (bugs) => bugs.filter((bug) => !bug.resolved)
+  (bugs) => bugs.list.filter((bug) => !bug.resolved)
 );
 
 // the create selector returns a function
@@ -58,5 +77,5 @@ export const getUnresolvedBugs = createSelector(
 export const getBugsByUser = (userId) =>
   createSelector(
     (state) => state.entities.bugs,
-    (bugs) => bugs.filter((bug) => bug.userId === userId)
+    (bugs) => bugs.list.filter((bug) => bug.userId === userId)
   );
