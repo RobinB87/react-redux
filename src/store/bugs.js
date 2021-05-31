@@ -3,6 +3,12 @@ import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
 import moment from "moment";
 
+// this file contains everything highly related to bugs
+// this is called COHESION in software development
+// if various files are used, several export statements are required
+// and the possibility exists you accidentally import actions and dispatch them
+// however, if the file gets to big, you might want to spplit ut
+
 // use createSlice to combine creating actions and reducers
 const slice = createSlice({
   name: "bugs",
