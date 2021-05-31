@@ -9,6 +9,19 @@ const slice = createSlice({
   name: "bugs",
   initialState: { list: [], loading: false, lastFetch: null },
   reducers: {
+    bugsRequested: (bugs, action) => {
+      bugs.loading = true;
+    },
+
+    bugsReceived: (bugs, action) => {
+      bugs.list = action.payload;
+      bugs.loading = false;
+    },
+
+    bugsRequestFailed: (bugs, action) => {
+      bugs.loading = false;
+    },
+
     // actions => action handlers
     bugAdded: (bugs, action) => {
       bugs.list.push({
@@ -26,10 +39,6 @@ const slice = createSlice({
       bugs.list[index].resolved = true;
     },
 
-    bugsReceived: (bugs, action) => {
-      bugs.list = action.payload;
-    },
-
     bugAssignedToUser: (bugs, action) => {
       const { bugId, userId } = action.payload;
       const index = bugs.list.findIndex((bug) => bug.id === bugId);
@@ -38,7 +47,8 @@ const slice = createSlice({
   },
 });
 
-export const { bugAdded, bugResolved, bugAssignedToUser, bugsReceived } = slice.actions;
+export const { bugsRequested, bugsReceived, bugsRequestFailed, bugAdded, bugResolved, bugAssignedToUser } =
+  slice.actions;
 export default slice.reducer;
 
 // action creators
@@ -46,10 +56,12 @@ const url = "/bugs";
 export const loadBugs = () =>
   apiCallBegan({
     url: url,
+    onStart: bugsRequested.type,
     // here we use strings, not passing functions
     // action objects should be serializable, to be stored
     // functions are not serializable
     onSuccess: bugsReceived.type,
+    onError: bugsRequestFailed.type,
     // middleware should be intelligent enough to catch normal errors,
     // so you do not need to specify onError everywhere
     // reserve it for specific scenarios where you want to do something specific with the bugs
