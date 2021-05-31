@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
+import moment from "moment";
 
 let lastId = 0;
 
@@ -16,6 +17,7 @@ const slice = createSlice({
     bugsReceived: (bugs, action) => {
       bugs.list = action.payload;
       bugs.loading = false;
+      bugs.lastFetch = Date.now();
     },
 
     bugsRequestFailed: (bugs, action) => {
@@ -53,19 +55,38 @@ export default slice.reducer;
 
 // action creators
 const url = "/bugs";
-export const loadBugs = () =>
-  apiCallBegan({
-    url: url,
-    onStart: bugsRequested.type,
-    // here we use strings, not passing functions
-    // action objects should be serializable, to be stored
-    // functions are not serializable
-    onSuccess: bugsReceived.type,
-    onError: bugsRequestFailed.type,
-    // middleware should be intelligent enough to catch normal errors,
-    // so you do not need to specify onError everywhere
-    // reserve it for specific scenarios where you want to do something specific with the bugs
-  });
+
+// loadBugs is a func, that retunrs a func which has two params, dispatch and getstate
+export const loadBugs = () => (dispatch, getState) => {
+  const { lastFetch } = getState().entities.bugs;
+
+  const diffInMinutes = moment().diff(moment(lastFetch), "minutes");
+  if (diffInMinutes < 10) return;
+
+  // in order to start the workflow, we need to explicitly dispatch the action
+  dispatch(
+    apiCallBegan({
+      url: url,
+      onStart: bugsRequested.type,
+      onSuccess: bugsReceived.type,
+      onError: bugsRequestFailed.type,
+    })
+  );
+};
+
+// export const loadBugs = () =>
+//   apiCallBegan({
+//     url: url,
+//     onStart: bugsRequested.type,
+//     // here we use strings, not passing functions
+//     // action objects should be serializable, to be stored
+//     // functions are not serializable
+//     onSuccess: bugsReceived.type,
+//     onError: bugsRequestFailed.type,
+//     // middleware should be intelligent enough to catch normal errors,
+//     // so you do not need to specify onError everywhere
+//     // reserve it for specific scenarios where you want to do something specific with the bugs
+//   });
 
 // selectors
 // selector is a function that takes the state and returns the computed state
