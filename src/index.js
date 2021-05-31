@@ -1,5 +1,5 @@
 import configureStore from "./store/configureStore";
-import { loadBugs, addBug } from "./store/bugs";
+import { loadBugs, addBug, resolveBug, assignBugToUser } from "./store/bugs";
 
 const store = configureStore();
 
@@ -14,7 +14,11 @@ const store = configureStore();
 // });
 
 store.dispatch(loadBugs());
-store.dispatch(addBug({ description: "a" }));
+// store.dispatch(addBug({ description: "a" }));
+
+setTimeout(() => store.dispatch(resolveBug(1)), 2000);
+
+setTimeout(() => store.dispatch(assignBugToUser(1, 4)), 2000);
 
 // // in another part of the application you would not have access directly to the store
 // store.dispatch((dispatch, getState) => {
