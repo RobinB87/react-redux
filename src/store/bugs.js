@@ -3,8 +3,6 @@ import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
 import moment from "moment";
 
-let lastId = 0;
-
 // use createSlice to combine creating actions and reducers
 const slice = createSlice({
   name: "bugs",
@@ -26,14 +24,7 @@ const slice = createSlice({
 
     // actions => action handlers
     bugAdded: (bugs, action) => {
-      bugs.list.push({
-        // increment lastId
-        id: ++lastId,
-
-        // payload should contain the MINIMAL information to update our system
-        description: action.payload.description,
-        resolved: false,
-      });
+      bugs.list.push(action.payload);
     },
 
     bugResolved: (bugs, action) => {
@@ -87,6 +78,14 @@ export const loadBugs = () => (dispatch, getState) => {
 //     // so you do not need to specify onError everywhere
 //     // reserve it for specific scenarios where you want to do something specific with the bugs
 //   });
+
+export const addBug = (bug) =>
+  apiCallBegan({
+    url,
+    method: "post",
+    data: bug,
+    onSuccess: bugAdded.type,
+  });
 
 // selectors
 // selector is a function that takes the state and returns the computed state
