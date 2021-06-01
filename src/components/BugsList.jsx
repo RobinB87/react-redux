@@ -20,4 +20,5 @@ const BugsList = () => {
   );
 };
 
+// with hooks, you do not need the connect func anymore
 export default BugsList;
