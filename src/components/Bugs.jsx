@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { loadBugs } from "../store/bugs";
 import { connect } from "react-redux";
+import { loadBugs, resolveBug, getUnresolvedBugs } from "../store/bugs";
 
 class Bugs extends Component {
   componentDidMount() {
@@ -32,7 +32,10 @@ class Bugs extends Component {
     return (
       <ul>
         {this.props.bugs.map((bug) => (
-          <li key={bug.id}>{bug.description}</li>
+          <li key={bug.id}>
+            {bug.description}
+            <button onClick={() => this.props.resolveBug(bug.id)}>Resolve</button>
+          </li>
         ))}
       </ul>
     );
@@ -43,10 +46,13 @@ class Bugs extends Component {
 // this will happen via connect
 //    this func will take two arguments:
 //        1) what part of the store is this component interested in? => bugs: state.entities.bugs.list
-const mapStateToProps = (state) => ({ bugs: state.entities.bugs.list });
+const mapStateToProps = (state) => ({ bugs: getUnresolvedBugs(state) });
 
 //        2) dispatch actions
-const mapDispatchToProps = (dispatch) => ({ loadBugs: () => dispatch(loadBugs()) });
+const mapDispatchToProps = (dispatch) => ({
+  loadBugs: () => dispatch(loadBugs()),
+  resolveBug: (id) => dispatch(resolveBug(id)),
+});
 
 // connect is a HOC: it takes or returns a func or both
 // in this case, when we call connect func, it creates a new func which we call and pass our Bugs component

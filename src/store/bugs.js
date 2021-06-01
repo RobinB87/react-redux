@@ -27,10 +27,6 @@ const slice = createSlice({
       bugs.list.push(action.payload);
     },
 
-    bugUpdated: (bug, action) => {
-      bug = action.payload;
-    },
-
     bugResolved: (bugs, action) => {
       const index = bugs.list.findIndex((bug) => bug.id === action.payload.id);
       bugs.list[index].resolved = true;
