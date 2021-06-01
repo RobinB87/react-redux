@@ -67,7 +67,7 @@ export const loadBugs = () => (dispatch, getState) => {
   if (diffInMinutes < 10) return;
 
   // in order to start the workflow, we need to explicitly dispatch the action
-  dispatch(
+  return dispatch(
     apiCallBegan({
       url: url,
       onStart: bugsRequested.type,
