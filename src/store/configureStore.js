@@ -14,6 +14,11 @@ export default function () {
   // after that, add all own middleware funcs
   return configureStore({
     reducer,
-    middleware: [...getDefaultMiddleware(), logger({ destination: "console" }), toast, api],
+    middleware: [
+      ...getDefaultMiddleware(),
+      // logger({ destination: "console" }),
+      toast,
+      api,
+    ],
   });
 }

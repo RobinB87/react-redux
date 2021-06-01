@@ -24,11 +24,9 @@ describe("bugSlice", () => {
 
   it("should add the bug to the store if it is saved to the server", async () => {
     // dispatch addbug => store (is it inside?, do not care how it happens)
-
     const bug = { description: "a" };
     const savedBug = { ...bug, id: 1 };
-    // response code (200) and request body
-    fakeAxios.onPost("/bugs").reply(200, savedBug);
+    fakeAxios.onPost("/bugs").reply(200, savedBug); // response code (200) and request body
 
     await store.dispatch(addBug(bug));
 
@@ -42,6 +40,36 @@ describe("bugSlice", () => {
     await store.dispatch(addBug(bug));
 
     expect(bugSlice().list).toHaveLength(0);
+  });
+
+  it("should mark a bug as resolved if it is saved to the server", async () => {
+    fakeAxios.onPatch("/bugs/1").reply(200, { id: 1, resolved: true });
+    fakeAxios.onPost("/bugs").reply(200, { id: 1 });
+
+    await store.dispatch(addBug({}));
+    await store.dispatch(resolveBug(1));
+
+    expect(bugSlice().list[0].resolved).toBe(true);
+  });
+
+  it("should mark a bug as resolved if it is saved to the server", async () => {
+    fakeAxios.onPatch("/bugs/1").reply(200, { id: 1, resolved: true });
+    fakeAxios.onPost("/bugs").reply(200, { id: 1 }); // create bug first before it can be resolved
+
+    await store.dispatch(addBug({}));
+    await store.dispatch(resolveBug(1));
+
+    expect(bugSlice().list[0].resolved).toBe(true);
+  });
+
+  it("should not mark a bug as resolved if it is not saved to the server", async () => {
+    fakeAxios.onPatch("/bugs/1").reply(500);
+    fakeAxios.onPost("/bugs").reply(200, { id: 1 }); // create bug first before it can be resolved
+
+    await store.dispatch(addBug({}));
+    await store.dispatch(resolveBug(1));
+
+    expect(bugSlice().list[0].resolved).not.toBe(true);
   });
 
   describe("selectors", () => {
