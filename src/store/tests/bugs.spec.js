@@ -29,8 +29,6 @@ describe("bugSlice", () => {
   });
 
   it("should not add the bug to the store if it is not saved to the server", async () => {
-    // dispatch addbug => store (is it inside?, do not care how it happens)
-
     const bug = { description: "a" };
     fakeAxios.onPost("/bugs").reply(500);
 
